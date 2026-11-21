@@ -1,0 +1,11 @@
+Export validation — 20 November 2026
+
+
+> tattoolab-admin@0.1.0 test
+> node scripts/check-source.mjs && node scripts/check-finance.cjs && node scripts/check-invoice-detail.cjs
+
+39 inline scripts parsed; static config, source text, required features and export checks passed. These checks do not certify browser end-to-end behavior or production security.
+Correcto: duplicados por contenido y movimientos, renombrados, cuentas, originales fallidos, eliminación de duplicados sin perder movimientos, eliminación exclusiva, recarga sin reaparición, errores de guardado y recuperación tras interrupción.
+10 scripts con sintaxis válida. Detalle por factura, lectura automática, precios cero, valores ausentes, texto seguro y error de adjunto: correctos.
+
+Scope: syntax/configuration and isolated logic with synthetic data; no live Vercel or end-to-end browser validation.

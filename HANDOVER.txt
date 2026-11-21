@@ -1,0 +1,332 @@
+===== README.md =====
+
+# TattooLab — existing administration system
+
+This is a deployment export of the working TattooLab administration app, dated 20 November 2026. It preserves the existing design and modules; it is not a React/Next.js rewrite.
+
+The working local project has not been modified by this export. Historical embedded customer imports, example identities, and financial workbook transactions have been removed from the deployment copy. Your live browser data is not included. The deployable copy starts with an empty client registry on a new origin.
+
+## Files to use
+
+- `public/index.html`: complete current application: HTML, CSS, JavaScript, embedded forms and document readers.
+- `public/TattooLab-Ficha.html`: neutral standalone clinical/session form, also embedded inside the application.
+- `SOURCE_CODE.txt`: exact copy of `public/index.html`, provided for copying and pasting. Save its contents as HTML, not as JavaScript.
+- `vercel.json`: static deployment configuration; only `public/` is served.
+- `CONTEXTO_DEL_PROYECTO.md`: detailed handover and accepted decisions.
+- `docs/ARCHITECTURE.md`: code map, persistence, and dependencies.
+- `docs/MIGRATION_AND_LIMITATIONS.md`: what hosting changes, what it does not, and how to plan data migration.
+- `docs/EXPORT_MANIFEST.json`: source/export checksums and export adaptations.
+
+## Preview locally
+
+From this folder, run:
+
+```bash
+python3 -m http.server 8000 --directory public
+```
+
+Open http://localhost:8000. This is a new browser origin, so an empty registry here does not mean the local application's data was lost. Stop the preview with Ctrl+C. Create an administrator password when the clean application asks for one; no password is included in this repository.
+
+## Check the source
+
+Node.js is needed for this optional developer check, not for serving the app:
+
+```bash
+npm test
+```
+
+There are no package dependencies to install. The checks validate JavaScript syntax, JSON configuration, source-copy consistency and isolated finance/invoice logic using synthetic records and a memory storage stub. They are not end-to-end browser or actual IndexedDB integration tests.
+
+## Push to GitHub
+
+Create an empty PRIVATE repository named `tattoolab`. Replace YOUR-USERNAME in the command below. Open Terminal in this exported folder, then paste:
+
+```bash
+git init -b main
+git add .
+git commit -m "Preserve existing TattooLab system and add deployment handover"
+git remote add origin https://github.com/YOUR-USERNAME/tattoolab.git
+git push -u origin main
+```
+
+Authenticate with GitHub through your normal sign-in method; do not paste passwords or access tokens into source files. Do not upload the original working folder, invoices, browser backups, or client data to the repository.
+
+## Deploy with Vercel
+
+1. Import the GitHub repository into Vercel.
+2. Framework Preset: **Other**.
+3. Root Directory: the repository root.
+4. No build command is required. `vercel.json` sets an empty build command and Output Directory **public**.
+5. No environment variables or API keys are needed for this existing static version.
+6. Deploy and test using invented records first.
+
+Vercel's current static-build and configuration guidance:
+- https://vercel.com/docs/builds
+- https://vercel.com/docs/project-configuration/vercel-json
+
+Vercel hosts this app's files. It does NOT add a database, server-side login, shared user accounts, automatic backups, or synchronization. The built-in profile password gate is a local prototype feature, not server-enforced authorization. Restrict access to any preview that will contain private data; implement real backend authentication and storage before treating it as a shared production administration service.
+
+## Continue development
+
+Edit `public/index.html` as the authoritative source. After edits, refresh the text snapshot with:
+
+```bash
+cp public/index.html SOURCE_CODE.txt
+npm run check
+```
+
+Read the handover before changing storage keys or importing old data. Preserve the existing modules and business rules. Keep real customer, clinical, bank and invoice records outside Git.
+
+
+===== CONTEXTO_DEL_PROYECTO.md =====
+
+# CONTEXTO DEL PROYECTO — TattooLab
+
+Handover date: 20 November 2026, America/Santiago.
+
+## Objective and continuity
+
+TattooLab is the administration system for a tattoo studio. The owner wants one place to manage clients, clinical/session records, studio operations, payments, suppliers, assets, bank statements and financial classification. The current work must be preserved. Do not replace it with a generic dashboard, discard the financial panel, or start over because the source is a large HTML file.
+
+The working project was moved out of iCloud-synchronized Documents into a local `TattooLab-Local` folder after iCloud-only files prevented reads. This export is separate from that working copy. It is code, not a backup of the browser's current data.
+
+## Users
+
+- Administrator: clients, team/profile access, business configuration, finance and records.
+- Assistant: allowed booking, client and operational tasks.
+- Artist: relevant client/session data, professional procedure and session workflow.
+- Client: personal and clinical form, consent/signature and allowed client actions; iPad form includes Spanish/English support.
+
+These profiles currently use browser-side gates. They are not centrally authenticated accounts.
+
+## Existing modules and evidence of status
+
+| Module | Current source status | Important limits |
+|---|---|---|
+| Client registry, search and editing | Present | Browser-local records; clean export starts empty. |
+| Groups/professions, agenda and birthdays | Present | Calendar snapshots and local records; no live Calendar integration verified. |
+| Clinical/client forms, body map, consent/signature | Present | Generic neutral form retained; consent text is inherited source, not newly legally reviewed. |
+| Artist sessions, deposits, continuation and care | Present | Existing local workflow; real communication still requires the user's sending action. |
+| Products, sales and collections | Present | Local registry, no centrally synchronized inventory or payment gateway integration. |
+| Finance operations and monthly summary | Present | One main Office-banking workflow is the polishing priority. |
+| Bank statement reader | Present | XLSX, supported text PDFs, CSV/TXT/ASCII/TX1 formats; not a universal parser for all banks. |
+| Classification and manual review | Present | Deterministic rules and prior confirmed ledger matches; not an OpenAI API integration. |
+| Categories and subcategories | Present | Editable catalog, including fixed assets and recording/photography. |
+| Supplier invoices and provider memory | Present | PDF text extraction, browser OCR, parsed fields and line items; OCR can miss information. |
+| Click supplier to see purchased products | Added and checked | Shows per-document lines and unit prices; reads original if no lines are saved and attachment is accessible. |
+| Dates at start of uncertain bank transactions | Added and checked | DD/MM/YYYY in queue and review dialog. |
+| Statement history | Added and checked | Chronological sorting, account filter, state, resume/pause, originals and download. |
+| Delete a statement | Added and checked | Explicit irreversible warning; retain ledger by default or remove only exclusive ledger rows. |
+| Duplicate statement prevention | Added and checked | SHA-256 binary check, same-account transaction comparison, unique hash index for newly hashed files. |
+| Annual overview and pie chart | Annual operations aggregation exists | Requested summary/pie presentation is not verified complete; inspect before promising it. |
+| Multiple bank accounts/entities | Requirements recorded | Full independent bank spaces/parsers not complete. Polish one account first. |
+| Central backend, database, shared file storage | Missing | Hosting on Vercel alone does not supply these. |
+| Complete data/attachment backup and restore | Missing | JSON export exists; current import merges new clients only. |
+
+“Present” means the implementation exists in the source. This handover does not certify every clinical/profile flow or every bank format by end-to-end browser testing.
+
+## Recent interface decisions that must be preserved
+
+- Keep the current financial sidebar: operations, summary/movements, statement processor, categories, suppliers and settings.
+- The statement process remains Load → Classify → Review uncertainties → Confirm import.
+- Classify is an explicit user action. Uncertain items remain available for manual review; manual choices feed later classification through ledger history.
+- Show dates first in the review queue and Resolve dialog.
+- In statement history the FIRST column is Archive/account with month and year emphasized (for example March 2026). The SECOND is the actual transaction date range. Counts, state and actions follow.
+- Existing supplier names are clickable for THIS invoice's detail, quantities, unit prices and line totals. Missing data must be stated rather than invented.
+- New statement files are saved before parsing, including when parsing fails. PDF originals can be previewed; spreadsheet originals can be downloaded to open in Excel.
+- “Continue later” preserves the draft. History can resume it.
+- The requested “Attach original” button was subsequently removed. Do not restore it automatically. The unused helper code remains for compatibility; it is not shown in the history.
+- Deletion is user-confirmed. Default is deleting the history/file while preserving financial movements, useful when cleaning duplicate archive entries.
+- Optional movement removal must preserve movements shared by other retained statements. Deletion markers stop older ledger entries from recreating removed history rows.
+- Exact copies are rejected even if renamed. Parsed copies with the same account and transaction signature are also rejected. Previously stored duplicates are not automatically deleted.
+
+## Business rules and catalog context
+
+- Existing design uses CLP and Chilean date/business conventions; use America/Santiago consistently.
+- Session rate commonly CLP 60,000/hour and typical minimum six hours. Project deposit commonly CLP 60,000; preserve the existing allocation/remaining-deposit workflow rather than charging it again at each continuation.
+- Fixed asset category: computers, TVs, furniture, air conditioning, bins, electric/hydraulic tattoo chairs, work tables, iPad, iPhone and recording/photography equipment.
+- Recording and photography groups cameras, sound/microphones and lighting; preserve the current configurable hierarchy rather than resolving older spelling variations by deleting categories.
+- Supplier identity memory can fill missing RUT, business activity, address, commune, city, region and classification from earlier documents. Never copy invoice-specific dates, folios or totals from a different month.
+- Buying foreign currency is distinct from the final supplier invoice. The owner also administers Escuela de Tatuaje SpA; separate legal-entity ownership from the bank account used. This multi-entity accounting is a future modeling task, not completed automation.
+- Required later bank spaces include Banco de Chile, personal BancoEstado, personal/commercial Santander and Santander Office Banking. Actual account numbers and entity identifiers are intentionally not distributed in this code handover.
+
+## Design
+
+Preserve the established visual system. Finance uses a dark navy sidebar and primary buttons (#1c1b2d / #1c1b2d family), warm gray background (#efeee8), white bordered rounded cards, muted supporting text and compact tables. Green indicates income/completion, red expenses/destructive actions, amber review, blue informational states. Finance uses Inter/system sans fallbacks. Embedded client/session forms also use DM Sans and Manrope with olive/lime accents. Google Fonts may load externally.
+
+Main components: persistent role/client header, sidebar navigation, summary cards, tables, upload/drop areas, step indicator, status badges and shared modal dialogs. Desktop is the main financial workflow; client forms support iPad. Do not apply a new visual theme during deployment.
+
+## Technology and architecture
+
+See `docs/ARCHITECTURE.md`. The application uses plain HTML, CSS and JavaScript with embedded PDF.js, its worker, JSZip, and dynamically loaded Tesseract.js 6.0.1 for photo OCR. It is not React, Next.js or a Vercel server application. No OpenAI API key or cloud LLM integration is configured.
+
+## Deployment export adaptations
+
+The code export removes one-off historical client imports/corrections and hard-coded financial workbook transactions, removes a historical single-client Calendar simulation from the form, and reuses the full neutral generic form for new clients. The integrated finance processor and current features remain. The obsolete link to a historical mock bank processor is omitted. This is not a data migration, and the local working system was not changed by these export adaptations.
+
+## Current checks
+
+During recent local development, JavaScript syntax and isolated logic checks covered invoice-detail rendering, missing/zero values, safe text, statement file retention, drafts, resumption, partial import deduplication, same-file and transaction-signature detection, archive deletion, exclusive/shared ledger behavior, failed saves and interrupted-deletion recovery. The export includes a reproducible syntax/configuration check. A live Vercel deployment and full browser regression are still required.
+
+## Priorities for the next developer
+
+1. Run this exact export locally and on a restricted Vercel preview. Check all existing navigation and the current finance workflow with invented files.
+2. Preserve and separately back up the current local registry, statement database and supplier attachment folder before changing browsers, URLs, origins or paths.
+3. Implement complete, versioned export/import of localStorage records AND IndexedDB bank files/drafts AND supplier attachment metadata/files. The existing import button is not a full restore.
+4. Add server-side authentication/authorization, a shared database and private object storage if this becomes a multi-user hosted system. Do not embed service secrets in static HTML.
+5. Polish one bank format/account first, including parser fixtures, balances, totals, ambiguous classification and responsive performance.
+6. Complete annual summary/pie charts and supplier extraction accuracy without losing current ledger/history features.
+7. Add independent bank/legal-entity spaces after the first account works reliably.
+8. Gradually separate styles, domain logic, storage and document readers with regression checks. Avoid a framework rewrite as a deployment prerequisite.
+
+## Copyable instruction for the next chat
+
+> Continue the EXISTING TattooLab project from `public/index.html`; do not redesign or recreate it. Read CONTEXTO_DEL_PROYECTO.md and docs/ARCHITECTURE.md first. The client, clinical, artist, supplier and finance modules must all remain. Preserve statement originals, chronological history, manual review with dates, duplicate prevention, deletion warnings, and the month/account-first column order. Treat browser records and files as private data separate from source. Vercel hosting does not migrate them or implement shared authentication. Work from this handover, verify the existing behavior, and implement the remaining priorities incrementally.
+
+
+===== docs/ARCHITECTURE.md =====
+
+# Architecture — current implementation
+
+## Layout
+
+```text
+public/
+  index.html                 # Authoritative current application, embedded assets/scripts
+  TattooLab-Ficha.html        # Generic standalone session/clinical form
+  robots.txt                 # Discourages indexing; not access control
+scripts/
+  check-source.mjs            # Offline syntax/configuration checks
+  check-finance.cjs           # Isolated duplicate/deletion logic checks
+  check-invoice-detail.cjs    # Isolated invoice-detail checks
+SOURCE_CODE.txt              # Copy/paste snapshot of public/index.html
+CONTEXTO_DEL_PROYECTO.md
+README.md
+vercel.json
+package.json
+.gitignore
+docs/
+  ARCHITECTURE.md
+  MIGRATION_AND_LIMITATIONS.md
+  EXPORT_MANIFEST.json
+```
+
+Only `public/` is published. Documentation and the text source are repository/handover artifacts, not deployment routes.
+
+## Runtime structure
+
+The root document has inline CSS and successive classic JavaScript modules/scripts. The first application script supplies `seed`, `db`, `persist`, the client registry and basic rendering. Another large script embeds `CASE_PAGES`, a child-frame bridge, role switching, local auth, products, collections and finance. Subsequent scripts extend agenda, sorting, iPad forms and birthdays. PDF.js source and worker are embedded as `type="text/plain"` script bodies. JSZip is embedded with its license header.
+
+The export's CASE_PAGES uses one neutral full form, with a compatibility fallback for older HTML form names. `openCase` embeds form source in an iframe. Parent and child use `postMessage` with a client/frame token; the bridge updates `db.sessionRecords`. The iPad client form is separately embedded in `IPAD_CLIENT_PAGE`. This is not server-side trust or isolation between real user accounts.
+
+Existing code has layers of function overrides. Keep script ordering and closure scope intact. Extracting a function into a separate file can break access to lexical state. First add regression checks, then split source incrementally.
+
+## Important code entry points
+
+| Area | Functions/state |
+|---|---|
+| Root registry | `db`, `persist`, `render`, `exportData`, `importData` |
+| Profiles and local gate | `authPrompt`, `enterRole`, `getKeys`, `passwordHash`, `rememberAdminOnReload` |
+| Embedded forms | `CASE_PAGES`, `IPAD_CLIENT_PAGE`, `CHILD_BRIDGE`, `openCase` |
+| Finance | `showFinance`, `financeTab`, `financeLedger`, `financeSave`, `financeOperations`, `financeTable` |
+| Parsing/import | `financeReadFile`, `financeParse`, `financeBankRows`, `financeStage`, `financeClassify`, `financeReview` |
+| Statements | `financeStatementStore`, `financeInitStatements`, `financeStatementsView`, `financeLoadStatement`, `financeResumeStatement`, `financeRememberStatement` |
+| Duplicate checks | `financeStatementFileHash`, `financeFindFileDuplicate`, `financeStatementSignature`, `financeFindRowsDuplicate` |
+| Deletion | `financeConfirmDeleteStatement`, `financeDeleteStatement`, `financeStatementRemovalIds`, `financeRecoverStatementDeletions` |
+| Supplier documents | `financeSuppliers`, `bindFinanceSuppliers`, `supplierFields`, `readSupplierPdf`, `readSupplierPhoto`, `supplierMemory` |
+| Invoice details | `showSupplierDocumentDetail`, `supplierDocumentItemsTable`, `editSupplierDocument` |
+
+## Persistence
+
+| Store | Key/name | Contents |
+|---|---|---|
+| localStorage | `tattoolab-admin-registry-v1` | Root `db`: clients, groups, session snapshots, audit activity, ledger, suppliers, catalog/configuration as present |
+| localStorage | `tattoolab-local-profile-keys-v1` | Local profile password hashes/salts; not distributed in the export |
+| sessionStorage | `tattoolab-admin-reload` | Current tab's administrator-reload marker |
+| IndexedDB | `tattoolab-bank-statements`, version 2 | `statements` store, keyPath `id`, unique sparse `fileHash` index |
+| IndexedDB | `tattoolab-supplier-folder`, version 1 | `settings` store containing the connected local folder handle |
+| File system | User-selected invoice folder | Large supplier originals referenced by `diskFile` |
+| Additional local keys | Form-specific draft/session keys | Client draft and standalone session state; inventory these before migration |
+
+All browser stores are scoped to the browser/profile/origin. Local-file URLs, localhost, Vercel previews and production domains must not be assumed to share data. A local folder handle needs user permission in the target browser and may not be usable on a new origin.
+
+## Statement record
+
+```js
+{
+  id, name, account, loadedAt,
+  file,          // File/Blob; structured-cloned by IndexedDB, NOT JSON
+  fileHash,      // SHA-256 of original bytes when calculated
+  rows,          // parsed rows, including saved manual classification
+  start, end,    // earliest/latest transaction dates, not bank-header period
+  state, error
+}
+```
+
+A deletion marker retains an ID and minimal row-ID references with `deleted: true`, without keeping the original Blob. This prevents legacy grouping from recreating a removed row in the history. An optional `pendingRemovalIds` journal permits idempotent recovery of a confirmed ledger deletion after interruption. Do not discard deletion markers without understanding that behavior.
+
+New uploads archive the file before parsing. A parse error is represented in history and can be retried. Legacy ledger-only records are shown as month/account groups with no invented original file. The unused original-attachment helper is retained in source, but its button was intentionally removed from the interface.
+
+Exact binary copies are checked even when renamed. Parsed same-account copies compare sorted date/amount/normalized-description lists, preserving repeated-item counts. Different bank export formats can abbreviate descriptions differently, so semantic matching is not a guarantee that every equivalent file is detected. Newly saved binary hashes also have a unique IndexedDB index. Separate browsers/profiles are independent; this is not centralized deduplication.
+
+## Import and deletion behavior
+
+`financeStage` excludes already imported IDs/bank references before preview. `financeSave` updates the ledger through root persistence. Statement drafts and originals live separately in IndexedDB. Imported status is also inferred from existing ledger rows. These stores cannot be assumed to commit as a single transaction.
+
+Deleting only history/file leaves ledger rows intact. Optional ledger deletion targets only exclusive Cartola-source rows; rows referenced by another retained history record are preserved. Dangling match links to removed rows are cleared and flagged for review. Interrupted removals use the journal described above.
+
+## Dependencies and external access
+
+- Vanilla HTML/CSS/JavaScript; no frontend framework, backend or database server.
+- Embedded JSZip 3.10.1, including upstream license notice.
+- Embedded Mozilla PDF.js and worker; upstream license notices retained. Inspect embedded headers when upgrading rather than guessing a package version.
+- Tesseract.js 6.0.1 loaded from jsDelivr for browser OCR, including Spanish recognition assets fetched by the worker.
+- Google Fonts may load DM Sans / Manrope.
+- WhatsApp links request opening the user's client; they do not automatically send messages.
+- No OpenAI API, paid OCR API, or automatic PDF24 connection is configured.
+
+Inline scripts, dynamic Blob modules/workers, srcdoc frames, OCR workers and external fonts are currently required. A strict CSP added without testing can break them. Don't add one by copying a generic example.
+
+## Recommended future architecture (not implemented)
+
+Preserve this frontend while adding server-enforced authentication, per-studio/per-entity authorization, a relational database for normalized records and a private object store for statement/invoice originals. Store secrets only in the backend. Introduce a versioned migration and backup service. This is a future phase, not a requirement to serve the static prototype.
+
+
+===== docs/MIGRATION_AND_LIMITATIONS.md =====
+
+# Migration and limitations
+
+## What the supplied files contain
+
+This package contains code and documentation, with embedded historical customer imports and finance transaction seeds removed. It does not contain the current localStorage/IndexedDB data from the open browser, user-selected invoice folders, passwords, password hashes from the browser, or API credentials.
+
+The original local working HTML is untouched. Its source checksum is recorded in EXPORT_MANIFEST.json. The export uses a neutral form and empty registry on a fresh origin. This is intentional separation of source and live records, not an instruction to reset the working system.
+
+## Before moving real operations
+
+1. Keep the original local file and browser/profile available. Do not clear browser storage, reset the application or discard the local invoice folder.
+2. Use the existing JSON export as one registry snapshot. It serializes `db`.
+3. Download bank originals individually where they are available and preserve the supplier originals folder separately.
+4. Have a developer implement and verify full versioned backup/restore before treating the hosted origin as a replacement.
+
+Important: `importData` currently validates a JSON file up to 5 MB and merges NEW clients. It does not restore existing-client edits, groups, all session records, the full ledger/catalog, or IndexedDB statement originals/drafts. Do not describe that button as a complete restore. Bank File/Blob values must be exported as actual files with a metadata manifest; JSON.stringify is not a file archive. Supplier directory handles must be reconnected with permission.
+
+## Vercel boundaries
+
+The configuration publishes only `public/`. Git stores source, Vercel serves source, and the browser still stores records. A new Vercel deployment URL, production domain or browser may show an empty registry. No cloud data synchronization is implemented.
+
+The password gate is local JavaScript logic. A technically capable visitor can inspect/alter client-side logic; a private GitHub repository does not restrict the deployed site's visitors. Use a restricted preview for development. Add real authentication, authorization, private shared storage and backup policies before using this as a shared production service.
+
+There is no configured API integration, server database, file-upload server, email sender, automatic Calendar sync or LLM classifier. OCR and bank parsing run in the browser; supported formats/photographs can still fail. Image OCR downloads its worker/language assets and can depend on network availability.
+
+The inherited consent and clinical workflow are source functionality, not a legal/clinical certification by this export. Preserve provenance and seek appropriate review before operational changes.
+
+## Verification before switching
+
+On a fresh preview, use fictional records to verify: creating a client; switching allowed profiles; opening the generic/iPad form; submitting and reviewing consent; continuing a session without recharging its deposit; supplier invoice upload and item view; bank upload, archive retention on failure, classify/review/import; reload/resume; duplicate rejection; default versus exclusive-ledger deletion; year/account filtering; and downloading originals.
+
+Then test a full backup/restore in a separate origin and compare IDs, record counts, totals, linked movements, draft classification, files and hashes. Keep rollback access to the original until these comparisons succeed.
+
+## Licensing
+
+Embedded upstream JSZip and PDF.js license headers are retained. This handover does not assign an open-source license to the studio's custom code; choose one deliberately if you later make the repository public.

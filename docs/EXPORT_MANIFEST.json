@@ -1,0 +1,19 @@
+{
+  "export_date": "2026-11-20",
+  "source_filename": "TattooLab-Administrador.html",
+  "original_source_sha256": "12a3ae8e958b79f91d60eaf6b7a0600c4b09775b4dcc84899f0e8dd9b7ccad57",
+  "export_sha256": "0b7c505819816c5de936d323b240cfabd2f0ba5116425654dbd0a858cbe733b3",
+  "working_source_modified": false,
+  "export_adaptations": [
+    "Removed embedded historical client imports, personal corrections, and finance workbook transactions.",
+    "Preserved generic client, calendar, birthday, finance, supplier, statement, and role code.",
+    "Replaced client-named embedded forms with one neutral generic form and backwards-compatible runtime aliases.",
+    "Cleared historical template name, email, and phone.",
+    "Provided a generic form fallback for new client records.",
+    "Omitted the link to the historical mock processor; the current integrated bank reader is retained.",
+    "Included Vercel static configuration and deployment documentation."
+  ],
+  "live_data_included": false,
+  "browser_data_exported": false,
+  "credentials_included": false
+}

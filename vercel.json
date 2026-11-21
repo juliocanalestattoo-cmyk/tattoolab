@@ -1,0 +1,39 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "",
+  "outputDirectory": "public",
+  "rewrites": [
+    {
+      "source": "/TattooLab-Administrador.html",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/TattooLab-Sesion-Capturas.html",
+      "destination": "/TattooLab-Ficha.html"
+    },
+    {
+      "source": "/TattooLab-Prueba-:name.html",
+      "destination": "/TattooLab-Ficha.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "same-origin"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    }
+  ]
+}

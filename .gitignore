@@ -1,0 +1,16 @@
+.DS_Store
+.vercel/
+.env
+.env.*
+!.env.example
+node_modules/
+backups/
+private-data/
+*.pdf
+*.xlsx
+*.xls
+*.csv
+*.tx1
+*.sqlite*
+TattooLab-Respaldo-*.json
+# Keep client data, clinical forms, invoice files, and browser exports out of Git.

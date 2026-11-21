@@ -1,0 +1,10 @@
+{
+  "name": "tattoolab-admin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TattooLab existing static administration system; no framework rewrite",
+  "scripts": {
+    "check": "node scripts/check-source.mjs",
+    "test": "node scripts/check-source.mjs && node scripts/check-finance.cjs && node scripts/check-invoice-detail.cjs"
+  }
+}
